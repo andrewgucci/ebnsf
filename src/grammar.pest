@@ -1,0 +1,29 @@
+// TODO: only really supports BNF syntax, need to add support for EBNF things like repitition specifiers
+
+syntax = { SOI ~ rule+ ~ EOI }
+
+expression = { list ~ ( "|" ~ list )* }
+
+list = { term+ }
+
+term = { literal | lbrack ~ rule_name ~ rbrack }
+
+literal = @{ "\"" ~ not_quote_or_nl+ ~ "\"" }
+
+rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_")* }
+
+rule = { lbrack ~ rule_name ~ rbrack ~ "::=" ~  expression ~ NEWLINE*}
+
+WHITESPACE = _{ " " | "\t" }
+
+// TODO: Need to handle escape characters at some point
+not_quote_or_nl = {
+    !(                // if the following text is not
+        "\""          //     a quote
+        | "\n"        //     or a newline
+    )
+    ~ ANY             // then consume one character
+}
+
+lbrack = _{ "<" }
+rbrack = _{ ">" }

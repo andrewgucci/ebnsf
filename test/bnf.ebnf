@@ -1,0 +1,14 @@
+<syntax>         ::= <rule> | <rule> <syntax>
+<rule>           ::= <opt_whitespace> "<" <rule_name> ">" <opt_whitespace> "::=" <opt_whitespace> <expression> <line_end>
+<opt_whitespace> ::= " " | " " <opt_whitespace>
+<expression>     ::= <list> | <list> <opt_whitespace> "|" <opt_whitespace> <expression>
+<line_end>       ::= <opt_whitespace> "\n" | <line_end> <line_end>
+<list>           ::= <term> | <term> <opt_whitespace> <list>
+<term>           ::= <literal> | "<" <rule_name> ">"
+<literal>        ::= "`" <text> "`"
+<text>           ::= <character> <text> | <character>
+<character>      ::= <letter> | <digit>
+<letter>         ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<digit>          ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<rule_name>      ::= <letter> | <rule_name> <rule_char>
+<rule_char>      ::= <letter> | <digit> | "_"

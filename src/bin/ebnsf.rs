@@ -1,13 +1,32 @@
+use clap::Parser;
 use ebnsf::parse_ebnf;
 
 use std::path::PathBuf;
 
+#[derive(clap::Parser)]
+struct Cli {
+    /// File to read EBNF spec from
+    input: String,
+
+    /// Where to save the rendered SVG
+    #[arg(short, long)]
+    output: Option<String>,
+}
+
 fn main() {
-    let ebnf = std::fs::read_to_string("test/bnf.ebnf").unwrap();
+    let cli = Cli::parse();
+
+    let ebnf = std::fs::read_to_string(&cli.input).unwrap();
 
     let diagram = parse_ebnf(&ebnf).unwrap();
 
-    let output = PathBuf::from("test.svg");
+    let output = if let Some(path) = cli.output {
+        PathBuf::from(path)
+    } else {
+        let mut path = PathBuf::from(cli.input);
+        path.set_extension("svg");
+        path
+    };
 
     std::fs::write(&output, diagram.to_string().into_bytes()).unwrap();
 }

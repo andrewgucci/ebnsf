@@ -8,7 +8,7 @@ expression = { list ~ ( "|" ~ list )* }
 
 list = { term+ }
 
-term = { literal | lbrack ~ rule_name ~ rbrack }
+term = { (literal | lbrack ~ rule_name ~ rbrack) ~ opt_modifier }
 
 literal = @{ "\"" ~ not_quote_or_nl+ ~ "\"" }
 
@@ -29,3 +29,8 @@ not_quote_or_nl = {
 
 lbrack = _{ "<" }
 rbrack = _{ ">" }
+
+opt_modifier = { (oper_cond | oper_alo | oper_rep)? }
+oper_cond    = { "?" }
+oper_alo     = { "+" } // alo = At Least One
+oper_rep     = { "*" }

@@ -36,7 +36,7 @@ Run `ebnsf ./test/bnf.ebnf -o ./doc/bnf.svg` to turn
 <rule_char>      ::= <letter> | <digit> | "_"
 ```
 into
-![bnf syntax diagram](https://github.com/user-attachments/assets/1971639c-0420-4878-b05e-c3884fbc5b61)
+![bnf syntax diagram](https://github.com/user-attachments/assets/6efcc0dd-3734-41c6-a08d-facec4b3bd7d)
 ## Todo
 - [x] support repitition specifiers and ranges (i.e. [a-z], +, *)
     - `?`, `+`, and `*` now supported

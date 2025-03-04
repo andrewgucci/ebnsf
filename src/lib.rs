@@ -85,7 +85,7 @@ fn parse_term(pair: Pair<'_, Rule>) -> DynNode {
 
     let node: DynNode = match grammar_rule {
         R::literal => Box::new(rr::Terminal::new(unescape(&pair))),
-        R::rule_name => Box::new(rr::Terminal::new(pair.as_str().to_owned())),
+        R::rule_name => Box::new(rr::NonTerminal::new(pair.as_str().to_owned())),
         R::grouped_list => make_node(pair),
         _ => {
             unreachable!()

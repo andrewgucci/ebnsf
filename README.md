@@ -6,6 +6,9 @@ Create railroad diagrams from EBNF
 ## Todo
 - support repitition specifiers and ranges (i.e. [a-z], +, *)
     - `?`, `+`, and `*` now supported
+    - ranges can be specified by cheating and treating them as literals, e.g. "[a-z]".
+      first-class support for ranges without wrapping them in quotes will be added later
+      (but they probably won't be validated).
 - support grouping
 - support rules spanning multiple lines
 - decide on the full syntax I want to use/support for EBNF.

@@ -38,19 +38,19 @@ Run `ebnsf ./test/bnf.ebnf -o ./doc/bnf.svg` to turn
 into
 ![bnf syntax diagram](https://github.com/user-attachments/assets/1971639c-0420-4878-b05e-c3884fbc5b61)
 ## Todo
-- support repitition specifiers and ranges (i.e. [a-z], +, *)
+- [x] support repitition specifiers and ranges (i.e. [a-z], +, *)
     - `?`, `+`, and `*` now supported
     - ranges can be specified by cheating and treating them as literals, e.g. "[a-z]".
       first-class support for ranges without wrapping them in quotes will be added later
       (but they probably won't be validated).
-- support grouping
+- [x] support grouping
     - grouping now supported (with repitition modifiers) using parenthesis
-- support rules spanning multiple lines
-- decide on the full syntax I want to use/support for EBNF.
-  See dwheeler.com, grammarware.net, w3.org, and cl.cam.ac.uk links below.
-- figure out if/how I want to handle bounded repitition
-- figure out if/how I want to handle negation
-- support escape characters
+- [ ] support rules spanning multiple lines
+- [ ] decide on the full syntax I want to use/support for EBNF.
+    See dwheeler.com, grammarware.net, w3.org, and cl.cam.ac.uk links below.
+- [ ] figure out if/how I want to handle bounded repitition
+- [ ] figure out if/how I want to handle negation
+- [x] support escape characters
     - supports escaping nested quotes and backslashes
 
 ## Credit

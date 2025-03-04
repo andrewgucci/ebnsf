@@ -4,17 +4,20 @@ syntax = _{ SOI ~ rules ~ EOI }
 
 rules = { rule+ }
 
-expression = { list ~ ( "|" ~ list )* }
+rule = { lbrack ~ rule_name ~ rbrack ~ "::=" ~ expression ~ NEWLINE*}
 
-list = { term+ }
+expression = { (( grouped_list ~ opt_modifier ) | list) ~ ( "|" ~ (grouped_list | list) )* }
 
-term = { (literal | lbrack ~ rule_name ~ rbrack) ~ opt_modifier }
+list = { (grouped_list ~ opt_modifier) | term+ }
+
+term = { grouped_list ~ opt_modifier |(literal | lbrack ~ rule_name ~ rbrack) ~ opt_modifier }
+
+grouped_list = { lparen ~ expression ~ rparen ~ opt_modifier }
 
 literal = @{ "\"" ~ not_quote_or_nl+ ~ "\"" }
 
 rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_")* }
 
-rule = { lbrack ~ rule_name ~ rbrack ~ "::=" ~  expression ~ NEWLINE*}
 
 WHITESPACE = _{ " " | "\t" }
 
@@ -29,6 +32,8 @@ not_quote_or_nl = {
 
 lbrack = _{ "<" }
 rbrack = _{ ">" }
+lparen = _{ "(" }
+rparen = _{ ")" }
 
 opt_modifier = { (oper_cond | oper_alo | oper_rep)? }
 oper_cond    = { "?" }

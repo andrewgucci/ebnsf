@@ -1,7 +1,8 @@
 <syntax>         ::= <rule>+
-<rule>           ::= <opt_whitespace> "<" <rule_name> ">" <opt_whitespace> "::=" <opt_whitespace> <expression> <line_end>
+<rule>           ::= <opt_whitespace> "<" <rule_name> ">" <opt_whitespace> "::=" <opt_whitespace> <group> <line_end>
 <opt_whitespace> ::= " "*
-<expression>     ::= <list> | <list> <opt_whitespace> "|" <opt_whitespace> <expression>
+<expression>     ::= <list> (<opt_whitespace> "|" <opt_whitespace> <expression>)?
+<group>          ::= "(" <expression> ")" | <expression>
 <line_end>       ::= <opt_whitespace> "\n"+
 <list>           ::= <term> | <term> <opt_whitespace> <list>
 <term>           ::= <literal> | "<" <rule_name> ">"

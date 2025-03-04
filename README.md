@@ -10,6 +10,7 @@ Create railroad diagrams from EBNF
       first-class support for ranges without wrapping them in quotes will be added later
       (but they probably won't be validated).
 - support grouping
+    - grouping now supported (with repitition modifiers) using parenthesis
 - support rules spanning multiple lines
 - decide on the full syntax I want to use/support for EBNF.
   See dwheeler.com, grammarware.net, w3.org, and cl.cam.ac.uk links below.

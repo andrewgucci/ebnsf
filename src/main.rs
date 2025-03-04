@@ -49,21 +49,30 @@ fn make_node(pair: Pair<'_, Rule>) -> Box<dyn rr::Node> {
             let name = Box::new(rr::Comment::new(rule.as_str().to_owned())) as DynNode;
 
             let expr = pair.next().expect("rule must have definition").into_inner();
-            let mut rule_def = expr.map(parse_expr).collect::<Vec<_>>();
+            let mut rule_def = expr.map(make_node).collect::<Vec<_>>();
 
             if rule_def.len() == 1 {
                 let mut node = rule_def.remove(0);
-                node.insert(0, name);
-                Box::new(rr::Sequence::new(node))
+                Box::new(rr::Sequence::new(vec![name, node]))
             } else {
-                let seqs = rule_def
-                    .into_iter()
-                    .map(|s| Box::new(rr::Sequence::new(s)) as DynNode)
-                    .collect::<Vec<_>>();
-                let x = vec![name, Box::new(rr::Choice::new(seqs))];
+                let x = vec![name, Box::new(rr::Choice::new(rule_def))];
 
                 Box::new(rr::Sequence::new(x))
             }
+        }
+        R::list => {
+            let seq = pair.into_inner().map(parse_term).collect::<Vec<_>>();
+            Box::new(rr::Sequence::new(seq))
+        }
+        R::grouped_list => {
+            let mut pairs = pair.into_inner();
+            let pair = pairs.next().unwrap();
+            let list = pair.into_inner();
+            let nodes = list.map(make_node).collect::<Vec<_>>();
+
+            let modifier = pairs.next().unwrap();
+            let grouped_list = Box::new(rr::Sequence::new(nodes));
+            parse_modifier(grouped_list, modifier)
         }
         _ => {
             unreachable!("unhandled rule '{:?}' ({})", pair.as_rule(), pair.as_str());
@@ -71,54 +80,23 @@ fn make_node(pair: Pair<'_, Rule>) -> Box<dyn rr::Node> {
     }
 }
 
-fn parse_expr(pair: Pair<'_, Rule>) -> Vec<DynNode> {
+fn parse_term(pair: Pair<'_, Rule>) -> DynNode {
     use Rule as R;
 
-    let node = match pair.as_rule() {
-        R::list => pair.into_inner().map(parse_term).collect::<Vec<_>>(),
+    let mut pairs = pair.into_inner();
+    let pair = pairs.next().unwrap();
+    let grammar_rule = pair.as_rule();
+
+    let node: DynNode = match grammar_rule {
+        R::literal => Box::new(rr::Terminal::new(pair.as_str().to_owned())),
+        R::rule_name => Box::new(rr::Terminal::new(pair.as_str().to_owned())),
+        R::grouped_list => make_node(pair),
         _ => {
-            unreachable!("parse_expr unsupported rule: {:?}", pair.as_rule());
+            unreachable!()
         }
     };
-
-    node
-}
-
-fn parse_term(pair: Pair<'_, Rule>) -> Box<dyn rr::Node> {
-    use Rule as R;
-
-    match pair.as_rule() {
-        R::term => {
-            let mut pair = pair.into_inner();
-            let rule_or_lit = pair.next().expect("term must have inner");
-            let modifier = pair
-                .next()
-                .expect("parser guarantees a modifier here")
-                .into_inner()
-                .next();
-
-            let node: DynNode = match rule_or_lit.as_rule() {
-                R::rule_name => Box::new(rr::NonTerminal::new(rule_or_lit.as_str().to_owned())),
-                R::literal => Box::new(rr::Terminal::new(rule_or_lit.as_str().to_owned())),
-                _ => {
-                    unreachable!("Got unsupported rule '{}' in term", rule_or_lit.as_str());
-                }
-            };
-            if let Some(m) = modifier {
-                match m.as_rule() {
-                    R::oper_cond => Box::new(rr::Optional::new(node)),
-                    R::oper_alo => Box::new(rr::Repeat::new(node, rr::Empty)),
-                    R::oper_rep => Box::new(rr::Optional::new(rr::Repeat::new(node, rr::Empty))),
-                    _ => unreachable!(),
-                }
-            } else {
-                node
-            }
-        }
-        _ => {
-            unreachable!("parse_expr unsupported rule: {:?}", pair.as_rule());
-        }
-    }
+    let modifier = pairs.next().unwrap();
+    parse_modifier(node, modifier)
 }
 
 fn new_optional(node: DynNode) -> DynNode {
@@ -126,4 +104,24 @@ fn new_optional(node: DynNode) -> DynNode {
 }
 fn new_repeat(node: DynNode, r: DynNode) -> DynNode {
     Box::new(rr::Repeat::new(node, r))
+}
+
+fn parse_modifier(node: DynNode, opt: Pair<'_, Rule>) -> DynNode {
+    let modifier = opt.into_inner().next();
+
+    if let Some(m) = modifier {
+        use Rule as R;
+
+        match m.as_rule() {
+            R::oper_cond => Box::new(rr::Optional::new(node)),
+            R::oper_alo => Box::new(rr::Repeat::new(node, rr::Empty)),
+            R::oper_rep => Box::new(rr::Optional::new(rr::Repeat::new(node, rr::Empty))),
+            _ => {
+                dbg!(&m);
+                unreachable!("\n\not invalid rule in parse_modifier\n\n")
+            }
+        }
+    } else {
+        node
+    }
 }

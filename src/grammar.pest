@@ -14,7 +14,10 @@ term = { grouped_list ~ opt_modifier |(literal | lbrack ~ rule_name ~ rbrack) ~ 
 
 grouped_list = { lparen ~ expression ~ rparen ~ opt_modifier }
 
-literal = @{ "\"" ~ not_quote_or_nl+ ~ "\"" }
+literal = @{
+    "\"" ~ not_quote_or_nl+ ~ "\"" | 
+    "'" ~ not_squote_or_nl+ ~ "'"
+}
 
 rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_")* }
 
@@ -27,7 +30,14 @@ not_quote_or_nl = {
         "\""          //     a quote
         | "\n"        //     or a newline
     )
-    ~ ANY             // then consume one character
+    ~ ( "\\" ~ "\"" | ANY )             // then consume one character
+}
+not_squote_or_nl = {
+    !(                // if the following text is not
+        "\'"          //     a quote
+        | "\n"        //     or a newline
+    )
+    ~ ( "\\" ~ "\'" | ANY )             // then consume one character
 }
 
 lbrack = _{ "<" }

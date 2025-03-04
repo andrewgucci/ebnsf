@@ -6,7 +6,7 @@
 <line_end>       ::= <opt_whitespace> "\n"+
 <list>           ::= <term> | <term> <opt_whitespace> <list>
 <term>           ::= <literal> | "<" <rule_name> ">"
-<literal>        ::= "`" <text> "`"
+<literal>        ::= '"' <text> '"'
 <text>           ::= <character>+
 <character>      ::= <letter> | <digit>
 <letter>         ::= "[A-Za-z]"

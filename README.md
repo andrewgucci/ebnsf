@@ -17,6 +17,7 @@ Create railroad diagrams from EBNF
 - figure out if/how I want to handle bounded repitition
 - figure out if/how I want to handle negation
 - support escape characters
+    - supports escaping nested quotes and backslashes
 
 ## Credit
 Initial parser and `test/bnf.ebnf` file from BNF specification in EBNF form from https://bnfplayground.pauliankline.com/ > Examples > BNF

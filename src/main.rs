@@ -88,7 +88,7 @@ fn parse_term(pair: Pair<'_, Rule>) -> DynNode {
     let grammar_rule = pair.as_rule();
 
     let node: DynNode = match grammar_rule {
-        R::literal => Box::new(rr::Terminal::new(pair.as_str().to_owned())),
+        R::literal => Box::new(rr::Terminal::new(unescape(&pair))),
         R::rule_name => Box::new(rr::Terminal::new(pair.as_str().to_owned())),
         R::grouped_list => make_node(pair),
         _ => {
@@ -124,4 +124,26 @@ fn parse_modifier(node: DynNode, opt: Pair<'_, Rule>) -> DynNode {
     } else {
         node
     }
+}
+
+// Modified from https://github.com/lukaslueg/railroad_dsl/blob/06841c393b323c83925304011d965c43a10127e7/src/lib.rs#L19
+fn unescape(pair: &Pair<'_, Rule>) -> String {
+    let s = pair.as_str();
+    let mut result = String::with_capacity(s.len());
+    let mut iter = s[1..s.len() - 1].chars();
+    while let Some(ch) = iter.next() {
+        result.push(match ch {
+            '\\' => {
+                let mut peekable = iter.clone().peekable();
+                let escaped = peekable.peek().expect("no escaped char?");
+                if ['"', '\'', '\\'].contains(escaped) {
+                    iter.next().unwrap()
+                } else {
+                    ch
+                }
+            }
+            _ => ch,
+        });
+    }
+    result
 }

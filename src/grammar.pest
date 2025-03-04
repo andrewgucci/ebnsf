@@ -1,6 +1,8 @@
 // TODO: only really supports BNF syntax, need to add support for EBNF things like repitition specifiers
 
-syntax = { SOI ~ rule+ ~ EOI }
+syntax = _{ SOI ~ rules ~ EOI }
+
+rules = { rule+ }
 
 expression = { list ~ ( "|" ~ list )* }
 

@@ -2,21 +2,19 @@
 
 use std::path::PathBuf;
 
-use pest::{iterators::Pair, Parser};
+use pest::{Parser, iterators::Pair};
 use pest_derive::Parser;
 
-use railroad as rr;
+use railroad::{self as rr, Diagram};
 
-type DynNode = Box<dyn rr::Node>;
+pub type DynNode = Box<dyn rr::Node>;
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]
 struct EBNFParser;
 
-fn main() {
-    let csv = std::fs::read_to_string("test/bnf.ebnf").unwrap();
-
-    let mut result = EBNFParser::parse(Rule::syntax, &csv).unwrap();
+pub fn parse_ebnf(src: &str) -> Result<Diagram<DynNode>, Box<pest::error::Error<Rule>>> {
+    let mut result = EBNFParser::parse(Rule::syntax, src)?;
 
     let trees = result.next().expect("expected root expr").into_inner();
 
@@ -30,13 +28,11 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
-    let mut diagram = rr::Diagram::new(Box::new(rr::VerticalGrid::new(nodes)));
+    let mut diagram = rr::Diagram::new(Box::new(rr::VerticalGrid::new(nodes)) as DynNode);
 
     diagram.add_css(rr::DEFAULT_CSS);
 
-    let output = PathBuf::from("test.svg");
-
-    std::fs::write(&output, diagram.to_string().into_bytes()).unwrap();
+    Ok(diagram)
 }
 
 fn make_node(pair: Pair<'_, Rule>) -> Box<dyn rr::Node> {

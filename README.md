@@ -52,13 +52,14 @@ into
 - [ ] figure out if/how I want to handle negation
 - [x] support escape characters
     - supports escaping nested quotes and backslashes
+- [ ] decide what comment syntax to use
 
 ## Credit
-Initial parser and `test/bnf.ebnf` file from BNF specification in EBNF form from https://bnfplayground.pauliankline.com/ > Examples > BNF
+Initial parser and `grammars/bnf.ebnf` file based on from BNF specification in EBNF form from https://bnfplayground.pauliankline.com/ > Examples > BNF
 
 Additional reading on EBNF syntax:
 
-https://www.cl.cam.ac.uk/~mgk25/iso-14977.pdf
-https://dwheeler.com/essays/dont-use-iso-14977-ebnf.html
-https://www.grammarware.net/text/2012/bnf-was-here.pdf
-https://www.w3.org/TR/xml/#sec-notation
+- https://www.cl.cam.ac.uk/~mgk25/iso-14977.pdf
+- https://dwheeler.com/essays/dont-use-iso-14977-ebnf.html
+- https://www.grammarware.net/text/2012/bnf-was-here.pdf
+- https://www.w3.org/TR/xml/#sec-notation

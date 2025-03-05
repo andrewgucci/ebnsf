@@ -55,7 +55,8 @@ into
 - [ ] decide what comment syntax to use
 
 ## Credit
-Initial parser and `grammars/bnf.ebnf` file based on from BNF specification in EBNF form from https://bnfplayground.pauliankline.com/ > Examples > BNF
+- Initial parser and `grammars/bnf.ebnf` file based on from BNF specification in EBNF form from https://bnfplayground.pauliankline.com/ > Examples > BNF
+- `grammars/semver.ebnf` from https://semver.org/spec/v2.0.0.html#backusnaur-form-grammar-for-valid-semver-versions
 
 Additional reading on EBNF syntax:
 

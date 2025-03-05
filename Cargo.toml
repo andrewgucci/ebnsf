@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 description = "A CLI to generate railroad (syntax) diagrams from EBNF spcs"
 repository = "https://github.com/brokenbyte/ebnsf"
 readme = "README.md"
-exclude = ["test/*", "doc/*"]
+exclude = ["grammars/*", "doc/*"]
 
 [dependencies]
 clap = { version = "4.5.31", features = ["derive"] }

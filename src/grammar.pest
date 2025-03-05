@@ -19,7 +19,7 @@ literal = @{
     "'" ~ not_squote_or_nl+ ~ "'"
 }
 
-rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_")* }
+rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_" | " " | "-")* }
 
 
 WHITESPACE = _{ " " | "\t" }

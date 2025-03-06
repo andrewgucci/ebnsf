@@ -56,19 +56,28 @@ fn make_node(pair: Pair<'_, Rule>) -> Box<dyn rr::Node> {
                 Box::new(rr::Sequence::new(x))
             }
         }
+        R::expression => {
+            let mut nodes = pair.into_inner().map(make_node).collect::<Vec<_>>();
+
+            if nodes.len() == 1 {
+                nodes.remove(0)
+            } else {
+                Box::new(rr::Choice::new(nodes))
+            }
+        }
         R::list => {
             let seq = pair.into_inner().map(parse_term).collect::<Vec<_>>();
             Box::new(rr::Sequence::new(seq))
         }
+        R::term => parse_term(pair),
         R::grouped_list => {
             let mut pairs = pair.into_inner();
+
             let pair = pairs.next().unwrap();
-            let list = pair.into_inner();
-            let nodes = list.map(make_node).collect::<Vec<_>>();
+            let nodes = make_node(pair);
 
             let modifier = pairs.next().unwrap();
-            let grouped_list = Box::new(rr::Sequence::new(nodes));
-            parse_modifier(grouped_list, modifier)
+            parse_modifier(nodes, modifier)
         }
         _ => {
             unreachable!("unhandled rule '{:?}' ({})", pair.as_rule(), pair.as_str());
@@ -95,13 +104,6 @@ fn parse_term(pair: Pair<'_, Rule>) -> DynNode {
     parse_modifier(node, modifier)
 }
 
-fn new_optional(node: DynNode) -> DynNode {
-    Box::new(rr::Optional::new(node))
-}
-fn new_repeat(node: DynNode, r: DynNode) -> DynNode {
-    Box::new(rr::Repeat::new(node, r))
-}
-
 fn parse_modifier(node: DynNode, opt: Pair<'_, Rule>) -> DynNode {
     let modifier = opt.into_inner().next();
 
@@ -114,7 +116,7 @@ fn parse_modifier(node: DynNode, opt: Pair<'_, Rule>) -> DynNode {
             R::oper_rep => Box::new(rr::Optional::new(rr::Repeat::new(node, rr::Empty))),
             _ => {
                 dbg!(&m);
-                unreachable!("\n\not invalid rule in parse_modifier\n\n")
+                unreachable!("\n\ninvalid rule in parse_modifier\n\n")
             }
         }
     } else {

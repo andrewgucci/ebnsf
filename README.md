@@ -45,9 +45,9 @@ into
       (but they probably won't be validated).
 - [x] support grouping
     - grouping now supported (with repitition modifiers) using parenthesis
-- [ ] support rules spanning multiple lines
+- [x] support rules spanning multiple lines
 - [ ] decide on the full syntax I want to use/support for EBNF.
-    See dwheeler.com, grammarware.net, w3.org, and cl.cam.ac.uk links below.
+      See dwheeler.com, grammarware.net, w3.org, and cl.cam.ac.uk links below.
 - [ ] figure out if/how I want to handle bounded repitition
 - [ ] figure out if/how I want to handle negation
 - [x] support escape characters

@@ -1,9 +1,9 @@
 [package]
 name = "ebnsf"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-description = "A CLI to generate railroad (syntax) diagrams from EBNF spcs"
+description = "A CLI to generate railroad (syntax) diagrams from EBNF specs"
 repository = "https://github.com/brokenbyte/ebnsf"
 readme = "README.md"
 exclude = ["grammars/*", "doc/*"]

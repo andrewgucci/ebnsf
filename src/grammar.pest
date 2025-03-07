@@ -6,21 +6,37 @@ rules = { rule+ }
 
 rule = { lbrack ~ rule_name ~ rbrack ~ "::=" ~ expression ~ NEWLINE*}
 
-expression = { (grouped_list | list) ~ ( "\n"* ~ "|" ~ (grouped_list | list) )* }
+// Expressions are composed of at least one list followed by zero or more optional variants
+expression = { (list) ~ ( "\n"* ~ "|" ~ (list) )* }
 
-list = { grouped_list | term+ }
+// Lists are composed of zero or more terms
+// Empty expressions aka group lists without terms are valid, if this is not intended then can be term+ instead.
+list = { term* }
 
+// Terms are composed of either grouped lists which can contain nested expressions, 
+// or literals or rule names followed by an optional modifier
 term = { grouped_list | (literal | lbrack ~ rule_name ~ rbrack) ~ opt_modifier }
 
+// Grouped lists are composed of nested expressions wrapped in parenthesis followed by
+// an optional modifier
 grouped_list = { lparen ~ expression ~ rparen ~ opt_modifier }
+
+opt_modifier = { (oper_cond | oper_alo | oper_rep)? }
+oper_cond    = { "?" }
+oper_alo     = { "+" } // alo = At Least One
+oper_rep     = { "*" }
 
 literal = @{
     "\"" ~ not_quote_or_nl+ ~ "\"" | 
     "'" ~ not_squote_or_nl+ ~ "'"
 }
 
-rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_" | " " | "-")* }
+lbrack = _{ "<" }
+rbrack = _{ ">" }
+lparen = _{ "(" }
+rparen = _{ ")" }
 
+rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_" | " " | "-")* }
 
 WHITESPACE = _{ " " | "\t" }
 
@@ -39,13 +55,3 @@ not_squote_or_nl = {
     )
     ~ ( "\\" ~ "\'" | ANY )             // then consume one character
 }
-
-lbrack = _{ "<" }
-rbrack = _{ ">" }
-lparen = _{ "(" }
-rparen = _{ ")" }
-
-opt_modifier = { (oper_cond | oper_alo | oper_rep)? }
-oper_cond    = { "?" }
-oper_alo     = { "+" } // alo = At Least One
-oper_rep     = { "*" }

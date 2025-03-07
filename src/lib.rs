@@ -100,8 +100,8 @@ fn parse_term(pair: Pair<'_, Rule>) -> DynNode {
             unreachable!()
         }
     };
-    let modifier = pairs.next().unwrap();
-    parse_modifier(node, modifier)
+
+    node
 }
 
 fn parse_modifier(node: DynNode, opt: Pair<'_, Rule>) -> DynNode {

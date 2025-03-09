@@ -10,7 +10,7 @@ sequence_list = { sequence ~ ( "\n"* ~ "|" ~ "\n"* ~ sequence )* }
 
 sequence = { (term | group)+ }
 
-group = { "(" ~ (sequence_list) ~ ")" ~ opt_modifier}
+group = { "(" ~ NEWLINE* ~ (sequence_list) ~ NEWLINE* ~ ")" ~ opt_modifier}
 
 nonterminal = @{ lbrack ~ rule_name ~ rbrack }
 

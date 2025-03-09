@@ -20,3 +20,21 @@ fn simple_groups() {
 
     insta::assert_snapshot!("simple_groups", svg);
 }
+
+#[test]
+fn multiline_groups() {
+    let rule = "\
+<rule> ::= <foo>
+        | (<foo> | <bar>)
+        | (
+                <fizz>
+              | (\"foo\" | \"bar\")
+          )
+";
+
+    let svg = parse_ebnf(rule).expect("valid grammar").to_string();
+
+    save_svg("multiline_groups", &svg);
+
+    insta::assert_snapshot!("multiline_groups", svg);
+}

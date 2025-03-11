@@ -4,15 +4,17 @@ syntax = _{ SOI ~ rules ~ EOI }
 
 rules = { rule+ }
 
-rule = { lbrack ~ rule_name ~ rbrack ~ "::=" ~ expression ~ NEWLINE*}
+rule = { nonterminal ~ "::=" ~ sequence_list ~ NEWLINE*}
 
-expression = { (( grouped_list ~ opt_modifier ) | list) ~ ( "\n"* ~ "|" ~ (grouped_list | list) )* }
+sequence_list = { sequence ~ ( "\n"* ~ "|" ~ "\n"* ~ sequence )* }
 
-list = { (grouped_list ~ opt_modifier) | term+ }
+sequence = { (term | group)+ }
 
-term = { grouped_list ~ opt_modifier |(literal | lbrack ~ rule_name ~ rbrack) ~ opt_modifier }
+group = { "(" ~ NEWLINE* ~ (sequence_list) ~ NEWLINE* ~ ")" ~ opt_modifier}
 
-grouped_list = { lparen ~ expression ~ rparen ~ opt_modifier }
+nonterminal = @{ lbrack ~ rule_name ~ rbrack }
+
+term = { (literal | nonterminal) ~ opt_modifier}
 
 literal = @{
     "\"" ~ not_quote_or_nl+ ~ "\"" | 
@@ -21,23 +23,21 @@ literal = @{
 
 rule_name = { ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_" | " " | "-")* }
 
-
 WHITESPACE = _{ " " | "\t" }
 
-// TODO: Need to handle escape characters at some point
 not_quote_or_nl = {
     !(                // if the following text is not
         "\""          //     a quote
         | "\n"        //     or a newline
     )
-    ~ ( "\\" ~ "\"" | ANY )             // then consume one character
+    ~ ( "\\" ~ "\"" | ANY ) // then consume one character
 }
 not_squote_or_nl = {
     !(                // if the following text is not
         "\'"          //     a quote
         | "\n"        //     or a newline
     )
-    ~ ( "\\" ~ "\'" | ANY )             // then consume one character
+    ~ ( "\\" ~ "\'" | ANY ) // then consume one character
 }
 
 lbrack = _{ "<" }
@@ -45,7 +45,7 @@ rbrack = _{ ">" }
 lparen = _{ "(" }
 rparen = _{ ")" }
 
-opt_modifier = { (oper_cond | oper_alo | oper_rep)? }
+opt_modifier = { (oper_cond | oper_plus | oper_star)? }
 oper_cond    = { "?" }
-oper_alo     = { "+" } // alo = At Least One
-oper_rep     = { "*" }
+oper_plus    = { "+" }
+oper_star    = { "*" }
